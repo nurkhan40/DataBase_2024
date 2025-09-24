@@ -27,7 +27,7 @@ CREATE TABLESPACE course_data
 
 CREATE DATABASE university_distributed
     TABLESPACE = student_data
-    ENCODING = 'LATIN9'
+    ENCODING = 'UTF8' --LATIN9 НЕ НАХОДИТ
     CONNECTION LIMIT = -1;
 
 -- Part - 2
@@ -240,3 +240,65 @@ DROP DATABASE IF EXISTS university_distributed;
 
 CREATE DATABASE university_backup
     WITH TEMPLATE = university_main;
+
+
+-- Class Work
+-- Part A
+--1
+CREATE DATABASE library_system
+    WITH OWNER = postgres
+    CONNECTION LIMIT = 75
+    ENCODING = 'UTF8';
+
+--2
+CREATE TABLESPACE digital_content
+    LOCATION 'C:/data/digital';
+
+--Part B
+
+CREATE TABLE book_catalog(
+    catalog_id SERIAL PRIMARY KEY,
+    isbn CHAR(13) UNIQUE NOT NULL,
+    book_title VARCHAR(150) NOT NULL,
+    author_name VARCHAR(100) NOT NULL,
+    publisher VARCHAR(80),
+    total_pages INT CHECK (total_pages > 0),
+    book_format CHAR(10),
+    purchase_price NUMERIC(10, 2) CHECK (purchase_price >= 0),
+    is_available BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE digital_downloads(
+    download_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    catalog_id INT NOT NULL REFERENCES book_catalog(catalog_id) ON DELETE CASCADE,
+    download_timestamp TIMESTAMP NOT NULL DEFAULT NOW(),
+    file_format VARCHAR(10),
+    file_size_mb REAL,--real number
+    download_completed BOOLEAN DEFAULT FALSE,
+    expiry_date DATE,
+    access_count SMALLINT CHECK (access_count >=0)
+);
+
+-- Part C
+ALTER TABLE book_catalog
+    ADD COLUMN genre VARCHAR(50),
+    ADD COLUMN library_section CHAR(3),
+    ALTER COLUMN genre SET DEFAULT 'UNKNOWN';
+
+ALTER TABLE digital_downloads
+    ADD COLUMN device_type VARCHAR(30),
+    ALTER COLUMN file_size_mb TYPE INT,
+    ADD COLUMN last_accessed TIMESTAMP;
+
+-- Part D
+
+CREATE TABLE reading_sessions(
+    session_id SERIAL PRIMARY KEY,
+    user_reference INT NOT NULL REFERENCES digital_downloads(user_id) ON DELETE CASCADE,
+    book_reference INT NOT NULL REFERENCES book_catalog(catalog_id) ON DELETE CASCADE,
+    session_start TIMESTAMP NOT NULL DEFAULT NOW(),
+    reading_duration INTERVAL,
+    pages_read SMALLINT CHECK (pages_read >= 0),
+    session_active BOOLEAN DEFAULT TRUE
+);
