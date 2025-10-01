@@ -295,8 +295,8 @@ ALTER TABLE digital_downloads
 
 CREATE TABLE reading_sessions(
     session_id SERIAL PRIMARY KEY,
-    user_reference INT NOT NULL REFERENCES digital_downloads(user_id) ON DELETE CASCADE,
-    book_reference INT NOT NULL REFERENCES book_catalog(catalog_id) ON DELETE CASCADE,
+    user_reference INT,
+    book_reference INT,
     session_start TIMESTAMP NOT NULL DEFAULT NOW(),
     reading_duration INTERVAL,
     pages_read SMALLINT CHECK (pages_read >= 0),
