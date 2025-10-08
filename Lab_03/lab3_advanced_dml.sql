@@ -42,9 +42,9 @@ INSERT INTO departments (dept_id, dept_name, budget, manager_id) VALUES
 ON CONFLICT (dept_id) DO NOTHING;
 
 --2
-INSERT INTO employees (emp_id, first_name, last_name, dept_id, hire_date) VALUES
-(1, 'Almukhan', 'Dawit', 1, '2022-01-15'),
-(2, 'Zhanerke', 'Bolsinbek', 2, '2023-05-20')
+INSERT INTO employees (emp_id, first_name, last_name, hire_date) VALUES
+(1, 'Almukhan', 'Dawit', '2022-01-15'),
+(2, 'Zhanerke', 'Bolsinbek',  '2023-05-20')
 ON CONFLICT (emp_id) DO NOTHING;
 
 --3
