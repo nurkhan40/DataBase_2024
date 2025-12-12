@@ -140,6 +140,141 @@ SELECT
 FROM
     employees;
 
+
+--
+
+SELECT
+    UPPER(last_name) AS last_name_uppercase,
+    LOWER(first_name) AS first_name_lowercase,
+    LENGTH(last_name) AS last_name_length
+FROM
+    Patients;
+
+SELECT
+    'Dr. ' || first_name || ' ' || last_name || ' specializes in ' || specialization AS doctor_info
+FROM
+    Doctors;
+
+
+SELECT
+    first_name,
+    last_name,
+    specialization
+FROM
+    Doctors
+WHERE
+    specialization LIKE '%Cardio%';
+
+SELECT
+    first_name || ' ' || last_name AS doctor_name,
+    hire_date,
+    DATE_PART('year', AGE(CURRENT_DATE, hire_date)) AS years_of_service
+FROM
+    Doctors;
+
+
+SELECT
+    first_name,
+    last_name,
+    admission_date
+FROM
+    Patients
+WHERE
+    EXTRACT(YEAR FROM admission_date) = 2024;
+
+
+SELECT
+    appointment_id,
+    treatment_cost,
+    -- Calculate cost + 15% tax
+    treatment_cost * 1.15 AS cost_with_tax,
+    -- Round the cost to the nearest whole number (integer)
+    ROUND(treatment_cost) AS rounded_cost
+FROM
+    Appointments;
+
+SELECT
+    first_name || ' ' || last_name AS patient_name,
+    birth_date,
+    DATE_PART('year', AGE(CURRENT_DATE, birth_date)) AS age_in_years
+FROM
+    Patients;
+
+
+SELECT
+    d.diagnosis_type,
+    AVG(a.treatment_cost) AS average_treatment_cost
+FROM
+    Appointments a
+JOIN
+    Diagnoses d ON a.diagnosis_id = d.diagnosis_id
+GROUP BY
+    d.diagnosis_type
+ORDER BY
+    average_treatment_cost DESC;
+
+
+SELECT
+    d.first_name || ' ' || d.last_name AS doctor_name,
+    COUNT(a.appointment_id) AS total_appointments_handled
+FROM
+    Doctors d
+JOIN
+    Appointments a ON d.doctor_id = a.doctor_id
+GROUP BY
+    d.doctor_id, d.first_name, d.last_name
+HAVING
+    COUNT(a.appointment_id) > 3
+ORDER BY
+    total_appointments_handled DESC;
+
+
+SELECT
+    patient_id,
+    SUM(treatment_cost) AS total_treatment_cost
+FROM
+    Appointments
+GROUP BY
+    patient_id
+ORDER BY
+    total_treatment_cost DESC;
+
+
+SELECT
+    MIN(salary) AS minimum_doctor_salary,
+    MAX(salary) AS maximum_doctor_salary
+FROM
+    Doctors;
+
+
+SELECT
+    p.first_name || ' ' || p.last_name AS patient_name
+FROM
+    Patients p
+WHERE
+    EXISTS (
+        SELECT 1
+        FROM Appointments a
+        WHERE a.patient_id = p.patient_id
+    )
+ORDER BY
+    p.last_name, p.first_name;
+
+
+SELECT
+    first_name || ' ' || last_name AS doctor_name,
+    specialization,
+    salary
+FROM
+    Doctors
+WHERE
+    salary < ANY (
+        SELECT salary
+        FROM Doctors
+        WHERE specialization = 'Surgery'
+    )
+ORDER BY
+    salary;
 --3
 SELECT
     'Project: ' || project_name || ' - Budget: $' || budget || ' - Status: ' || status AS project_report_string
@@ -150,7 +285,7 @@ SELECT
     first_name || ' ' || last_name AS full_name,
     hire_date,
     -- Calculates the difference between the current date and hire_date in years
-    DATE_PART('year', AGE(CURRENT_DATE, hire_date)) AS years_of_service
+    DATE_PART('year', AGE(CURRENT_DATE, hire_date)) AS years_of_service 
 FROM
     employees;
 
